@@ -1,25 +1,13 @@
 import os.path
+from functools import reduce
 
-def read(*args, dict={}) -> None:
+def read(*args,) -> None:
+	sum = 0
 	for path in args:
 		if not os.path.isfile(path):
-			for word in path.split():
-				if word in dict:
-					dict[word] = dict[word] + 1
-				else:
-					dict[word] = 1
+			sum += reduce(lambda accum, _: accum + 1, path.split(), 0)
 		else:
 			with open(path, 'r') as file:
 				for line in file:
-					for word in line.split():
-							if word in dict:
-								dict[word] = dict[word] + 1
-							else:
-								dict[word] = 1
-	return dict
-
-
-
-dixt = read('word word', 'test_word_count.txt', 'klk klk klk')
-
-print(dixt)
+					sum += reduce(lambda accum, _: accum + 1, path.split(), 0)
+	return sum
