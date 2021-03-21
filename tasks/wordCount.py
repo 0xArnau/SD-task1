@@ -11,10 +11,3 @@ def read(path: str, dict={}) -> dict:
 		print("\nFileNotFoundError\n")
 	finally:
 		return dict
-
-
-
-dixt = read('test_word_count.txt')
-
-for x in dixt:
-	print(f"{x} :: {dixt[x]}")
