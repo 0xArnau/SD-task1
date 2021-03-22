@@ -1,4 +1,4 @@
-def read(path: str, dict={}) -> dict:
+def wordCount(path: str, dict={}) -> dict:
 	try:
 		with open(path, 'r') as file:
 			for line in file:

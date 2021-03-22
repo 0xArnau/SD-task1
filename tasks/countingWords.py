@@ -1,6 +1,6 @@
 import os.path
 
-def read(*args) -> int:
+def countingWords(*args) -> int:
 	sum = 0
 	for path in args:
 		if not os.path.isfile(path):
