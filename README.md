@@ -1,3 +1,7 @@
+### Sources:
+- https://python-rq.org/docs/
+
+  
 ## Task 1: Communication models and Middleware
 
 The goal is to design and implement a cluster manager capable of executing 
