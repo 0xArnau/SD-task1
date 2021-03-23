@@ -2,8 +2,8 @@
 - https://python-rq.org/docs/
 
 ### Requirements:
-- pip install rq
-- pip install redis
+- pip install [rq](https://github.com/rq/rq)
+- pip install [redis](https://github.com/andymccurdy/redis-py)
 
 ## Task 1: Communication models and Middleware
 
