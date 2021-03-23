@@ -4,6 +4,7 @@
 ### Requirements:
 - pip install [rq](https://github.com/rq/rq)
 - pip install [redis](https://github.com/andymccurdy/redis-py)
+- pip install [grpc](https://grpc.io/)
 
 ## Task 1: Communication models and Middleware
 
