@@ -1,7 +1,10 @@
 ### Sources:
 - https://python-rq.org/docs/
 
-  
+### Requirements:
+- pip install rq
+- pip install redis
+
 ## Task 1: Communication models and Middleware
 
 The goal is to design and implement a cluster manager capable of executing 
