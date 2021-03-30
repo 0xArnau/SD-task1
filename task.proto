@@ -1,6 +1,23 @@
 syntax = "proto3";
 
-message Url {
-	string file = 1;
+package task;
+
+service SendTask
+{
+	// A simple RPC.
+	//
+	// Obtains the MessageResponse at a given position.
+   rpc GetServerResponse(Task) returns (TaskResponse) {}
+  
+  }
+
+message Task {
+	string task = 1;
+	string file = 2;
+}
+
+
+message TaskResponse {
+	string result = 1;
 }
 

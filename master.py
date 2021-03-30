@@ -16,9 +16,8 @@ r.flushall
 t0 = time.time()
 jobs = []
 
-
 for _ in range(10):
- jobs.append(q.enqueue(wordCount, 'test_word_count.txt', result_ttl=-1))
+ jobs.append(q.enqueue(wordCount, 'test_word_count.txt', result_ttl=-1))			#restult = -1 time where task is in Redis queue
  jobs.append(q.enqueue(countingWords, 'test_word_count.txt', result_ttl=-1))
 
 #time.sleep(5)
