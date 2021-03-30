@@ -1,10 +1,13 @@
-### Sources:
+#### Sources:
 - https://python-rq.org/docs/
 
-### Requirements:
+#### Requirements:
 - pip install [rq](https://github.com/rq/rq)
 - pip install [redis](https://github.com/andymccurdy/redis-py)
 - pip install [grpcio](https://grpc.io/)
+
+###### Generate stubs
+- python -m grpc_tools.protoc --proto_path=. ./task.proto --python_out=. --grpc_python_out=.
 
 ## Task 1: Communication models and Middleware
 
