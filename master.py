@@ -21,27 +21,33 @@ class TaskService(pb2_grpc.SendTaskServicer):
         pass
 
     def GetServerResponse(self, request, context):
-        jobs = []
         TaskName = request.task
         FileName = request.file
 
-        #els workers peten per aqui
+        #print("Task name: "+TaskName)
+        #print("File name: "+FileName)
 
-        jobs.append(q.enqueue(TaskName, FileName, result_ttl=-1))
+        job = q.enqueue(TaskName, FileName, result_ttl=0)
+        print(job.get_id())
 
-        while any(not job.is_finished for job in jobs):
-            time.sleep(1)
+        if job.is_queued:
+            print("ENQUEUED")
         
-        for job in jobs:
-	        print(job.result)
+        if job.is_started:
+            print("STARTED")
         
-        result = {'result': jobs[0].result}
+        #Result es None
+        result = {'result': job.result}
         print(result)
+
+        if job.is_finished:
+            print("FINISHED")
         
         return pb2.TaskResponse(**result)
 
 def serve():
     print("Initialized! We are ready")
+    print("Waiting for client...")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     pb2_grpc.add_SendTaskServicer_to_server(TaskService(), server)
     server.add_insecure_port('[::]:50051')

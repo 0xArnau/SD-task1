@@ -18,6 +18,6 @@ if __name__ == '__main__':
     for _ in range(n):
         p = Process(target=processTask, args=())
         p.start()
-        ps.append(p)
+        ps.append(p)        #Perque crear una llista i fer despres join a no fer-ho ja quan fem start
     for p in ps:
         p.join()
