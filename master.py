@@ -46,7 +46,7 @@ class TaskService(pb2_grpc.SendTaskServicer):
             print("STARTED")
         
         #Result es None
-        result = {'result': job.result}
+        result = {'result': str(job.result)}
         print(result)
 
         if job.is_finished:
