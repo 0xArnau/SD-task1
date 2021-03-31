@@ -9,6 +9,11 @@ import time
 
 from tasks import *
 
+TASK = {
+    'countingWords': countingWords,
+    'wordCount': wordCount
+}
+
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
@@ -27,12 +32,16 @@ class TaskService(pb2_grpc.SendTaskServicer):
         #print("Task name: "+TaskName)
         #print("File name: "+FileName)
 
-        job = q.enqueue(TaskName, FileName, result_ttl=0)
+        job = q.enqueue(TASK[TaskName], FileName, result_ttl=100)
         print(job.get_id())
 
         if job.is_queued:
             print("ENQUEUED")
         
+        while not job.is_finished:
+            print(job.is_finished)
+            time.sleep(5)
+
         if job.is_started:
             print("STARTED")
         
