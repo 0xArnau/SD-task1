@@ -21,11 +21,11 @@ class TaskClient(object):
         
 if __name__ == '__main__':
     client = TaskClient()
-    result = []
-    for _ in range(1):
-        #result.append(client.getResultTask(task='countingWords', file='test_word_count.txt'))
-        result.append(client.getResultTask(task='wordCount', file='test_word_count.txt'))
+    while True:
+        print("Available tasks:")
+        print("\tcountingWords\n\twordCount\n")
+        task = input("Task name: >> ")
+        file = input("File name: >> ")
+        result = (client.getResultTask(task=task, file=file))
+        print(result)
     
-
-    for x in result:
-        print(x)

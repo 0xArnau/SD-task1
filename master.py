@@ -9,7 +9,7 @@ import time
 
 from tasks import *
 
-TASK = {
+TASKS = {
     'countingWords': countingWords,
     'wordCount': wordCount
 }
@@ -26,13 +26,15 @@ class TaskService(pb2_grpc.SendTaskServicer):
         pass
 
     def GetServerResponse(self, request, context):
-        TaskName = request.task
-        FileName = request.file
+        taskName = request.task
+        fileName = request.file
 
         #print("Task name: "+TaskName)
         #print("File name: "+FileName)
+        if taskName not in TASKS:
+            return pb2.TaskResponse(**{'result': "Task does not exist"})
 
-        job = q.enqueue(TASK[TaskName], FileName, result_ttl=100)
+        job = q.enqueue(TASKS[taskName], fileName, result_ttl=100)
         print(job.get_id())
 
         if job.is_queued:
@@ -46,13 +48,13 @@ class TaskService(pb2_grpc.SendTaskServicer):
             print("STARTED")
         
         #Result es None
-        result = {'result': str(job.result)}
-        print(result)
+        #result = {'result': str(job.result)}
+        #print(result)
 
         if job.is_finished:
             print("FINISHED")
         
-        return pb2.TaskResponse(**result)
+        return pb2.TaskResponse(**{'result': str(job.result)})
 
 def serve():
     print("Initialized! We are ready")
