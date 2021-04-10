@@ -1,4 +1,4 @@
-#### Sources:
+#### Resources:
 - https://python-rq.org/docs/
 
 #### Requirements:
@@ -7,7 +7,7 @@
 - pip install [grpcio](https://grpc.io/)
 
 ###### Generate stubs
-- python -m grpc_tools.protoc --proto_path=. ./task.proto --python_out=. --grpc_python_out=.
+    python -m grpc_tools.protoc --proto_path=. ./task.proto --python_out=. --grpc_python_out=.
 
 ## Task 1: Communication models and Middleware
 
