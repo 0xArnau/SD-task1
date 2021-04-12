@@ -18,9 +18,8 @@ class TaskClient(object):
         print(message)
 
         return self.stub.GetServerResponse(message)
-        
-if __name__ == '__main__':
-    client = TaskClient()
+
+def cli(client):
     while True:
         print("Available tasks:")
         print("\tcountingWords\n\twordCount\n")
@@ -28,4 +27,17 @@ if __name__ == '__main__':
         file = input("File name: >> ")
         result = (client.getResultTask(task=task, file=file))
         print(result)
+
+def loop(client, task, filename, n: int):
+    result = []
+    for _ in range(n):
+        result.append((client.getResultTask(task=task, file=filename)))
+    return result
+
+if __name__ == '__main__':
+    client = TaskClient()
+    #cli(client)
+    result = loop(client,'countingWords','test_word_count.txt',1)
+    for x in result:
+        print(x)
     
