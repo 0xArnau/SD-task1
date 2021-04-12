@@ -21,7 +21,7 @@ r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 q = Queue(connection=r)
 
 class TaskService(pb2_grpc.SendTaskServicer):
-    
+
     def __init__(self, *args, **kwargs):
         pass
 
@@ -35,25 +35,27 @@ class TaskService(pb2_grpc.SendTaskServicer):
             return pb2.TaskResponse(**{'result': "Task does not exist"})
 
         job = q.enqueue(TASKS[taskName], fileName, result_ttl=100)
-        print(job.get_id())
+        print(f"JOB ID: {job.get_id()}")
 
+        """
         if job.is_queued:
             print("ENQUEUED")
-        
+
         while not job.is_finished:
-            print(job.is_finished)
-            time.sleep(5)
+            time.sleep(1)
 
         if job.is_started:
             print("STARTED")
-        
+
         #Result es None
         #result = {'result': str(job.result)}
         #print(result)
 
         if job.is_finished:
             print("FINISHED")
-        
+        """
+        while not job.is_finished:
+            time.sleep(0.1)
         return pb2.TaskResponse(**{'result': str(job.result)})
 
 def serve():
