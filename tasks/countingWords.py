@@ -1,5 +1,3 @@
-import os.path
-import time
 from urllib.request import urlopen
 import urllib
 
