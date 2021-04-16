@@ -1,7 +1,0 @@
-https://www.semantics3.com/blog/a-simplified-guide-to-grpc-in-python-6c4e25f0c506/\
-
-proto --> proto
-
-calculator.py --> API
-server.py --> MASTER --> WORKER --> Els workers son processos definits al servidor
-client.py --> client 

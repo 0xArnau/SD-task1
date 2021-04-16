@@ -1,7 +1,7 @@
 import grpc
 from concurrent import futures      #with master this goes out
-import task_pb2_grpc as pb2_grpc
-import task_pb2 as pb2
+import proto.task_pb2_grpc as pb2_grpc
+import proto.task_pb2 as pb2
 
 class TaskService(pb2_grpc.SendTaskServicer):
     

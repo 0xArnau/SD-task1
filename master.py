@@ -2,8 +2,8 @@ from redis import Redis
 from rq import Queue
 import grpc
 from concurrent import futures      #with master this goes out
-import task_pb2_grpc as pb2_grpc
-import task_pb2 as pb2
+import proto.task_pb2_grpc as pb2_grpc
+import proto.task_pb2 as pb2
 
 import time
 
@@ -37,23 +37,6 @@ class TaskService(pb2_grpc.SendTaskServicer):
         job = q.enqueue(TASKS[taskName], fileName, result_ttl=100)
         print(f"JOB ID: {job.get_id()}")
 
-        """
-        if job.is_queued:
-            print("ENQUEUED")
-
-        while not job.is_finished:
-            time.sleep(1)
-
-        if job.is_started:
-            print("STARTED")
-
-        #Result es None
-        #result = {'result': str(job.result)}
-        #print(result)
-
-        if job.is_finished:
-            print("FINISHED")
-        """
         while not job.is_finished:
             time.sleep(0.1)
         return pb2.TaskResponse(**{'result': str(job.result)})

@@ -1,6 +1,6 @@
 import grpc
-import task_pb2_grpc as pb2_grpc
-import task_pb2 as pb2
+import proto.task_pb2_grpc as pb2_grpc
+import proto.task_pb2 as pb2
 
 class TaskClient(object):
 
@@ -24,7 +24,7 @@ def cli(client):
         print("Available tasks:")
         print("\tcountingWords\n\twordCount\n")
         task = input("Task name: >> ")
-        file = input("File name: >> ")
+        file = input("URL: >> ")
         result = (client.getResultTask(task=task, file=file))
         print(result)
 
@@ -37,7 +37,7 @@ def loop(client, task, filename, n: int):
 if __name__ == '__main__':
     client = TaskClient()
     #cli(client)
-    result = loop(client,'countingWords','test_word_count.txt',1)
+    result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
     for x in result:
         print(x)
     
