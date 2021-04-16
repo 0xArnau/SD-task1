@@ -39,6 +39,7 @@ class TaskService(pb2_grpc.SendTaskServicer):
 
         while not job.is_finished:
             time.sleep(0.1)
+            print("Not finished")
         return pb2.TaskResponse(**{'result': str(job.result)})
 
 def serve():
@@ -52,6 +53,7 @@ def serve():
 
 
 if __name__ == '__main__':
+    print("Make sure http.server is active")
     print("Initializing server...")
     serve()
 
