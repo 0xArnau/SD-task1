@@ -11,13 +11,25 @@ service SendTask
   
   }
 
+service ManageWorkers
+{
+	rpc GetWorkersResponse(Workers) returns (WorkersResponse) {}
+}
+
 message Task {
 	string task = 1;
 	string file = 2;
 }
 
-
 message TaskResponse {
 	string result = 1;
+}
+
+message Workers {
+	string manage = 1;
+}
+
+message WorkersResponse {
+	bool result = 1;
 }
 

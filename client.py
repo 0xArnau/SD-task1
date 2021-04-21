@@ -19,7 +19,31 @@ class TaskClient(object):
 
         return self.stub.GetServerResponse(message)
 
-def cli(client):
+class Worker(object):
+
+    def __init__(self):
+        self.host = 'localhost'
+        self.server_port = 50051
+
+        #Change to a secure channel
+        self.channel = grpc.insecure_channel('{}:{}'.format(self.host, self.server_port))
+
+        self.stubW = pb2_grpc.ManageWorkersStub(self.channel)
+
+    def manageWorkers(self, manage):
+        message = pb2.Workers(manage=manage)
+        print(message)
+
+        return self.stubW.GetWorkersResponse(message)
+
+
+def cli(client, worker):
+    while True:
+        print("Manage Workers")
+        manage = input("Operations...")
+        result = (worker.manageWorkers(manage=manage))
+        print(result)
+
     while True:
         print("Available tasks:")
         print("\tcountingWords\n\twordCount\n")
@@ -36,8 +60,9 @@ def loop(client, task, filename, n: int):
 
 if __name__ == '__main__':
     client = TaskClient()
-    #cli(client)
-    result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
+    worker = Worker()
+    cli(client, worker)
+    #result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
     for x in result:
         print(x)
     

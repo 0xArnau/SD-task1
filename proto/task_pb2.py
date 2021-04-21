@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\ntask.proto\x12\x04task\"\"\n\x04Task\x12\x0c\n\x04task\x18\x01 \x01(\t\x12\x0c\n\x04\x66ile\x18\x02 \x01(\t\"\x1e\n\x0cTaskResponse\x12\x0e\n\x06result\x18\x01 \x01(\t2A\n\x08SendTask\x12\x35\n\x11GetServerResponse\x12\n.task.Task\x1a\x12.task.TaskResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\ntask.proto\x12\x04task\"\"\n\x04Task\x12\x0c\n\x04task\x18\x01 \x01(\t\x12\x0c\n\x04\x66ile\x18\x02 \x01(\t\"\x1e\n\x0cTaskResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"\x19\n\x07Workers\x12\x0e\n\x06manage\x18\x01 \x01(\t\"!\n\x0fWorkersResponse\x12\x0e\n\x06result\x18\x01 \x01(\x08\x32\x41\n\x08SendTask\x12\x35\n\x11GetServerResponse\x12\n.task.Task\x1a\x12.task.TaskResponse\"\x00\x32M\n\rManageWorkers\x12<\n\x12GetWorkersResponse\x12\r.task.Workers\x1a\x15.task.WorkersResponse\"\x00\x62\x06proto3'
 )
 
 
@@ -95,8 +95,74 @@ _TASKRESPONSE = _descriptor.Descriptor(
   serialized_end=86,
 )
 
+
+_WORKERS = _descriptor.Descriptor(
+  name='Workers',
+  full_name='task.Workers',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='manage', full_name='task.Workers.manage', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=88,
+  serialized_end=113,
+)
+
+
+_WORKERSRESPONSE = _descriptor.Descriptor(
+  name='WorkersResponse',
+  full_name='task.WorkersResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='result', full_name='task.WorkersResponse.result', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=115,
+  serialized_end=148,
+)
+
 DESCRIPTOR.message_types_by_name['Task'] = _TASK
 DESCRIPTOR.message_types_by_name['TaskResponse'] = _TASKRESPONSE
+DESCRIPTOR.message_types_by_name['Workers'] = _WORKERS
+DESCRIPTOR.message_types_by_name['WorkersResponse'] = _WORKERSRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Task = _reflection.GeneratedProtocolMessageType('Task', (_message.Message,), {
@@ -113,6 +179,20 @@ TaskResponse = _reflection.GeneratedProtocolMessageType('TaskResponse', (_messag
   })
 _sym_db.RegisterMessage(TaskResponse)
 
+Workers = _reflection.GeneratedProtocolMessageType('Workers', (_message.Message,), {
+  'DESCRIPTOR' : _WORKERS,
+  '__module__' : 'task_pb2'
+  # @@protoc_insertion_point(class_scope:task.Workers)
+  })
+_sym_db.RegisterMessage(Workers)
+
+WorkersResponse = _reflection.GeneratedProtocolMessageType('WorkersResponse', (_message.Message,), {
+  'DESCRIPTOR' : _WORKERSRESPONSE,
+  '__module__' : 'task_pb2'
+  # @@protoc_insertion_point(class_scope:task.WorkersResponse)
+  })
+_sym_db.RegisterMessage(WorkersResponse)
+
 
 
 _SENDTASK = _descriptor.ServiceDescriptor(
@@ -122,8 +202,8 @@ _SENDTASK = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=88,
-  serialized_end=153,
+  serialized_start=150,
+  serialized_end=215,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetServerResponse',
@@ -139,5 +219,31 @@ _SENDTASK = _descriptor.ServiceDescriptor(
 _sym_db.RegisterServiceDescriptor(_SENDTASK)
 
 DESCRIPTOR.services_by_name['SendTask'] = _SENDTASK
+
+
+_MANAGEWORKERS = _descriptor.ServiceDescriptor(
+  name='ManageWorkers',
+  full_name='task.ManageWorkers',
+  file=DESCRIPTOR,
+  index=1,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=217,
+  serialized_end=294,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='GetWorkersResponse',
+    full_name='task.ManageWorkers.GetWorkersResponse',
+    index=0,
+    containing_service=None,
+    input_type=_WORKERS,
+    output_type=_WORKERSRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_MANAGEWORKERS)
+
+DESCRIPTOR.services_by_name['ManageWorkers'] = _MANAGEWORKERS
 
 # @@protoc_insertion_point(module_scope)
