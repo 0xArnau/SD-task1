@@ -7,12 +7,11 @@
 - pip install [rq](https://github.com/rq/rq)
 - pip install [redis](https://github.com/andymccurdy/redis-py)
 - pip install [grpcio](https://grpc.io/)
-- pip install grpcio-tools
+- pip install [grpcio-tools](https://pypi.org/project/grpcio-tools/)
 
 ###### Generate stubs
 
-    cd proto
-    python -m grpc_tools.protoc --proto_path=. ./task.proto --python_out=. --grpc_python_out=.
+    python -m grpc_tools.protoc --proto_path=. ./proto/task.proto --python_out=. --grpc_python_out=.
 
 ## Task 1: Communication models and Middleware
 
