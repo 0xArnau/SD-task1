@@ -10,8 +10,10 @@
 - pip install [grpcio-tools](https://pypi.org/project/grpcio-tools/)
 
 ###### Generate stubs
-
     python -m grpc_tools.protoc --proto_path=. ./proto/task.proto --python_out=. --grpc_python_out=.
+
+###### Start a python server
+    python -m http.server
 
 ## Task 1: Communication models and Middleware
 
