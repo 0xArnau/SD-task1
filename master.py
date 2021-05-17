@@ -34,48 +34,31 @@ class TaskService(pb2_grpc.SendTaskServicer):
 
     def GetServerResponse(self, request, context):
         taskName = request.task
-        fileName = request.file
-
-        #print("Task name: "+TaskName)
-        #print("File name: "+FileName)
-        if taskName not in TASKS:
-            return pb2.TaskResponse(**{'result': "Task does not exist"})
-
-        job = q.enqueue(TASKS[taskName], fileName, result_ttl=100)
+        arg = request.arg
+            
+        if taskName in MANAGE:
+            if MANAGE[taskName] == 'removeWorker':
+                job = q.enqueue(MANAGE[taskName], arg, result_ttl=100)      #arg = worker id or -1 for removing a random one
+            else:
+                job = q.enqueue(MANAGE[taskName], result_ttl=100)           #createWorker, listWorkers
+        elif taskName in TASKS:
+            job = q.enqueue(TASKS[taskName], arg, result_ttl=100)           #arg = URL
+        else:
+            return pb2.TaskResponse(**{'result': "Task does not exist"})    #countingWords, wordCount
+        
         print(f"JOB ID: {job.get_id()}")
 
         while not job.is_finished:
-            time.sleep(0.1)
+            time.sleep(2)
             print("Not finished")
         return pb2.TaskResponse(**{'result': str(job.result)})
-
-class WorkManage(pb2_grpc.ManageWorkers):
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def GetWorkersResponse(self, request, context):
-        print("GET WORKER RESPONSE")
-        manage = request.manage
-        print("Operation worker: "+manage)
-
-        if manage not in MANAGE:
-            return pb2.WorkersResponse(**{'result': False})
-
-        job = q.enqueue(MANAGE[manage], result_ttl=100)
-        print(f"JOB ID: {job.get_id()}")
-
-        while not job.is_finished:
-            time.sleep(0.1)
-            print("Not finished")
-        return pb2.TaskResponse(**{'result': job.result})
 
 def serve():
     print("Initialized! We are ready")
     print("Waiting for client...")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     pb2_grpc.add_SendTaskServicer_to_server(TaskService(), server)
-    pb2_grpc.add_ManageWorkersServicer_to_server(WorkManage(), server)
+    #pb2_grpc.add_ManageWorkersServicer_to_server(WorkManage(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()

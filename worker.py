@@ -19,10 +19,12 @@ def createWorker():
     global WORKERS_ID
 
     proc = Process(target=processTask, args=())
-    proc.start()
     WORKERS[WORKERS_ID] = proc
     WORKERS_ID += 1
+    listWorkers()
+    proc.start()
 
+    
     return True
 
 def removeWorker(id):
@@ -34,12 +36,12 @@ def removeWorker(id):
 
 def listWorkers():
     print(WORKERS)
-
-    return True
+    return WORKERS
 
 
 if __name__ == '__main__':
     createWorker()      #create on worker at least
+
 
 
 
