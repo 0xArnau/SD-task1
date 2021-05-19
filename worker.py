@@ -24,7 +24,6 @@ def createWorker():
     listWorkers()
     proc.start()
 
-    
     return True
 
 def removeWorker(id):
@@ -35,18 +34,13 @@ def removeWorker(id):
     return True
 
 def listWorkers():
-    print(WORKERS)
+    #print(WORKERS)
     return WORKERS
 
-
+"""
 if __name__ == '__main__':
     createWorker()      #create on worker at least
-
-
-
-
-
-
+"""
 """if __name__ == '__main__':
     n = cpu_count()
     print(n)

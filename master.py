@@ -1,31 +1,79 @@
-from redis import Redis
-from rq import Queue
 import grpc
+import time
+
+from redis import Redis
+from rq import Queue, Worker
+from multiprocessing import Process, cpu_count
 from concurrent import futures      #with master this goes out
+
 import proto.task_pb2_grpc as pb2_grpc
 import proto.task_pb2 as pb2
 
-import time
-
-from worker import createWorker, removeWorker, listWorkers
 from tasks import *
+
+
+#from worker import createWorker, listWorkers, processTask, removeWorker, processTask
+#from worker import WORKERS_ID, WORKERS, REDIS_HOST, REDIS_PORT
+
+############
+###TASKS###
+############
 
 TASKS = {
     'countingWords': countingWords,
     'wordCount': wordCount
 }
 
-MANAGE = {
-    'createWorker': createWorker,
-    'removeWorker': removeWorker,
-    'listWorkers': listWorkers
-}
+############
+###WORKER###
+############
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
+WORKERS = {}
+WORKERS_ID = 0
+
 r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 q = Queue(connection=r)
+
+def processTask():
+	r = Redis(host=REDIS_HOST, port=REDIS_PORT)
+	w = Worker(['default'], connection=r)
+	w.work()
+
+def createWorker():
+    global WORKERS
+    global WORKERS_ID
+
+    proc = Process(target=processTask, args=())
+    WORKERS[WORKERS_ID] = proc
+    WORKERS_ID += 1
+    listWorkers()
+    proc.start()
+    print("klk")
+    return True
+
+def removeWorker(id):
+    if id in WORKERS:
+        WORKERS[id].terminate()
+        WORKERS.pop(id)
+    
+    return True
+
+def listWorkers():
+    #print(WORKERS)
+    return WORKERS
+
+MANAGE = {
+    'createWorker': 'createWorker',
+    'removeWorker': 'removeWorker',
+    'listWorkers': 'listWorkers'
+}
+
+############
+###SERVER###
+############
 
 class TaskService(pb2_grpc.SendTaskServicer):
 
@@ -35,24 +83,31 @@ class TaskService(pb2_grpc.SendTaskServicer):
     def GetServerResponse(self, request, context):
         taskName = request.task
         arg = request.arg
-            
+        print('wtf')
         if taskName in MANAGE:
-            if MANAGE[taskName] == 'removeWorker':
-                job = q.enqueue(MANAGE[taskName], arg, result_ttl=100)      #arg = worker id or -1 for removing a random one
-            else:
-                job = q.enqueue(MANAGE[taskName], result_ttl=100)           #createWorker, listWorkers
+            print('wtf1')
+            if MANAGE[taskName] == 'removeWorker':      #arg = worker id or -1 for removing a random one
+                print('Remove Worker')
+                result = removeWorker()
+                return pb2.TaskResponse(**{'result': str(result)})            
+            elif MANAGE[taskName] == 'createWorker':
+                print('Create Worker')
+                result = createWorker()
+                return pb2.TaskResponse(**{'result': str(result)})
+            else:                                        #listWorkers
+                print('List Workers')
+                result = listWorkers()
+                return pb2.TaskResponse(**{'result': str(result)})
         elif taskName in TASKS:
             job = q.enqueue(TASKS[taskName], arg, result_ttl=100)           #arg = URL
+            print(f"JOB ID: {job.get_id()}")
+            while not job.is_finished:
+                time.sleep(2)
+                print("Not finished")
+            return pb2.TaskResponse(**{'result': str(job.result)})
         else:
             return pb2.TaskResponse(**{'result': "Task does not exist"})    #countingWords, wordCount
-        
-        print(f"JOB ID: {job.get_id()}")
-
-        while not job.is_finished:
-            time.sleep(2)
-            print("Not finished")
-        return pb2.TaskResponse(**{'result': str(job.result)})
-
+  
 def serve():
     print("Initialized! We are ready")
     print("Waiting for client...")

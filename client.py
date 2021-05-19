@@ -38,8 +38,10 @@ def loop(client, task, filename, n: int):
 if __name__ == '__main__':
     client = TaskClient()
     #result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
-    #loop(client,'createWorker','http://localhost:8000/test_word_count.txt',5)
-    result = loop(client,'listWorkers','http://localhost:8000/test_word_count.txt',1)
+    result = loop(client,'createWorker','http://localhost:8000/test_word_count.txt',1)
+    #for x in result:
+    #    print(x)
+    result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
     for x in result:
         print(x)
     
