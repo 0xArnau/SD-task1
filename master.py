@@ -1,5 +1,5 @@
-import grpc
 import time
+import grpc
 
 from redis import Redis
 from rq import Queue, Worker
@@ -11,22 +11,18 @@ import proto.task_pb2 as pb2
 
 from tasks import *
 
-
-#from worker import createWorker, listWorkers, processTask, removeWorker, processTask
-#from worker import WORKERS_ID, WORKERS, REDIS_HOST, REDIS_PORT
-
-############
-###TASKS###
-############
+###################
+###    TASKS    ###
+###################
 
 TASKS = {
     'countingWords': countingWords,
     'wordCount': wordCount
 }
 
-############
-###WORKER###
-############
+####################
+###    WORKER    ###
+####################
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
@@ -38,7 +34,7 @@ r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 q = Queue(connection=r)
 
 def processTask():
-	r = Redis(host=REDIS_HOST, port=REDIS_PORT)
+	#r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 	w = Worker(['default'], connection=r)
 	w.work()
 
@@ -51,8 +47,7 @@ def createWorker():
     WORKERS_ID += 1
     listWorkers()
     proc.start()
-    print("klk")
-    return True
+    return WORKERS_ID - 1
 
 def removeWorker(id):
     if id in WORKERS:
@@ -62,7 +57,6 @@ def removeWorker(id):
     return True
 
 def listWorkers():
-    #print(WORKERS)
     return WORKERS
 
 MANAGE = {
@@ -71,9 +65,9 @@ MANAGE = {
     'listWorkers': 'listWorkers'
 }
 
-############
-###SERVER###
-############
+####################
+###    SERVER    ###
+####################
 
 class TaskService(pb2_grpc.SendTaskServicer):
 
@@ -83,18 +77,17 @@ class TaskService(pb2_grpc.SendTaskServicer):
     def GetServerResponse(self, request, context):
         taskName = request.task
         arg = request.arg
-        print('wtf')
+        
         if taskName in MANAGE:
-            print('wtf1')
-            if MANAGE[taskName] == 'removeWorker':      #arg = worker id or -1 for removing a random one
+            if MANAGE[taskName] == 'removeWorker':                          #arg = worker id
                 print('Remove Worker')
-                result = removeWorker()
+                result = removeWorker(arg)
                 return pb2.TaskResponse(**{'result': str(result)})            
             elif MANAGE[taskName] == 'createWorker':
                 print('Create Worker')
                 result = createWorker()
                 return pb2.TaskResponse(**{'result': str(result)})
-            else:                                        #listWorkers
+            else:                                                           #listWorkers
                 print('List Workers')
                 result = listWorkers()
                 return pb2.TaskResponse(**{'result': str(result)})
@@ -102,7 +95,7 @@ class TaskService(pb2_grpc.SendTaskServicer):
             job = q.enqueue(TASKS[taskName], arg, result_ttl=100)           #arg = URL
             print(f"JOB ID: {job.get_id()}")
             while not job.is_finished:
-                time.sleep(2)
+                time.sleep(.1)
                 print("Not finished")
             return pb2.TaskResponse(**{'result': str(job.result)})
         else:

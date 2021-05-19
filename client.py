@@ -2,6 +2,8 @@ import grpc
 import proto.task_pb2_grpc as pb2_grpc
 import proto.task_pb2 as pb2
 
+from master import MANAGE
+
 class TaskClient(object):
 
     def __init__(self):
@@ -20,13 +22,37 @@ class TaskClient(object):
         return self.stub.GetServerResponse(message)
 
 def cli(client):
-
+    opt = 0
+    c_workers = 0
     while True:
+        print("Press 0 & enter to Exit")
+        print('Now you have: [0] Workers, to be able to execute any task, you must have at least one')
+        print("Manage Workers:")
+        print("\tlistWorkers\n\tremoveWorker\n\tcreateWorker\n")
+        opt = input("What do you want to do? ")
+        if opt == '0': break
+        if opt not in MANAGE:
+            print("ERROR: does not exist")
+        else:
+            arg = None
+            if MANAGE[opt] == 'removeWorker':
+                print('removeWorker needs an argument, it must be the worker ID')
+                arg = int(input("workerID: "))
+            elif MANAGE[opt] == 'createWorker': c_workers += 1
+            result = client.getResultTask(task=opt, arg=arg)
+            print(f"\n\t{result}\n")
+    opt = -1
+    if c_workers == 0:
+        print('ERROR: Workers cannot be 0')
+        exit(1)
+    while True:
+        print("Press 0 & enter to Exit")
         print("Available tasks:")
         print("\tcountingWords\n\twordCount\n")
-        task = input("Task name: >> ")
+        opt = input("Task name: >> ")
+        if opt == '0': break
         file = input("URL: >> ")
-        result = (client.getResultTask(task=task, arg=file))
+        result = (client.getResultTask(task=opt, arg=file))
         print(result)
 
 def loop(client, task, filename, n: int):
@@ -37,11 +63,7 @@ def loop(client, task, filename, n: int):
 
 if __name__ == '__main__':
     client = TaskClient()
-    #result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
-    result = loop(client,'createWorker','http://localhost:8000/test_word_count.txt',1)
-    #for x in result:
-    #    print(x)
-    result = loop(client,'wordCount','http://localhost:8000/test_word_count.txt',1)
-    for x in result:
-        print(x)
+    cli(client)
+
+
     
