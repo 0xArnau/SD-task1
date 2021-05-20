@@ -49,12 +49,15 @@ def createWorker():
     return WORKERS_ID - 1
 
 def removeWorker(id):
+    id = (int(id))
     if id in WORKERS:
         WORKERS[id].terminate()
         WORKERS.pop(id)
-    
-    return True
+        return True
 
+    else:
+        return False
+    
 def listWorkers():
     return WORKERS
 

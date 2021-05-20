@@ -25,6 +25,7 @@ def cli(client):
     c_workers = int(client.getResultTask(task='numberWorkers', arg=None).result)
     while True:
         print("Press 0 & enter to Exit")
+        print("Press 1 & enter to Select tasks\n")
         print('Now you have: [',c_workers,'] Workers, to be able to execute any task, you must have at least one')
         print("Manage Workers:")
         print("\tlistWorkers\n\tremoveWorker\n\tcreateWorker\n")
@@ -44,27 +45,48 @@ def cli(client):
             elif MANAGE[opt] == 'createWorker': c_workers += 1
             result = client.getResultTask(task=opt, arg=arg)
             print(f"\n\t{result}\n")
+        if opt == 1:
+            if c_workers == 0:
+                print('ERROR: Workers cannot be 0')
+                break
+
+            while True:
+                print("Press 0 & enter to Exit and Manage workers")
+                print("Available tasks:")
+                print("\tcountingWords\n\twordCount\n")
+                opt = input("Task name: >> ")
+
+                if opt == '0': break
+                file = input("URL: >> ")
+                result = (client.getResultTask(task=opt, arg=file))
+                print("result:",result.result,"\n")
 
 
-    opt = -1
-    if c_workers == 0:
-        print('ERROR: Workers cannot be 0')
-        exit(1)
+def test(client):
+    assert client.getResultTask(task='numberWorkers', arg=None).result          == '0'
+    assert client.getResultTask(task='listWorkers', arg=None).result            == '{}'
 
-    while True:
-        print("Press 0 & enter to Exit")
-        print("Available tasks:")
-        print("\tcountingWords\n\twordCount\n")
-        opt = input("Task name: >> ")
+    assert client.getResultTask(task='createWorker', arg=None).result           == '0'
+    assert client.getResultTask(task='removeWorker', arg='0').result            == 'True'
+   
+    assert client.getResultTask(task='numberWorkers', arg=None).result          == '0'
+    assert client.getResultTask(task='createWorker', arg=None).result           == '1'
+    assert client.getResultTask(task='createWorker', arg=None).result           == '2'
+    assert client.getResultTask(task='createWorker', arg=None).result           == '3'
 
-        if opt == '0': break
-        file = input("URL: >> ")
-        result = (client.getResultTask(task=opt, arg=file))
-        print("result:",result.result,"\n")
+    assert client.getResultTask(task='countingWords', arg='http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt').result             == '8'
+    assert client.getResultTask(task='countingWords', arg='http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test2.txt').result                       == '9'
+    assert client.getResultTask(task='countingWords', arg='http://localhost:8000/tests/test2.txt http://localhost:8000/tests/test2.txt').result                 	            == '10'
+    assert client.getResultTask(task='countingWords', arg='http://localhost:8000/tests/test2.txt http://localhost:8000/tests/test2.txt http://localhost:8000/tests/test2.txt http://localhost:8000/tests/test2.txt').result           == '20'
+
+    assert client.getResultTask(task='wordCount', arg='http://localhost:8000/tests/test_word_count.txt').result           == "{'foo': 2, 'barra': 2}"
+    assert client.getResultTask(task='wordCount', arg='http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt').result           == "{'foo': 4, 'barra': 4}"
+    assert client.getResultTask(task='wordCount', arg='http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt').result           == "{'foo': 6, 'barra': 6}"
 
 if __name__ == '__main__':
     client = TaskClient()
-    cli(client)
+    #cli(client)
+    test(client)
 
 
     
