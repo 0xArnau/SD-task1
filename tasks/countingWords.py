@@ -1,7 +1,7 @@
 from urllib.request import urlopen
 import urllib
 
-def countingWords(args) -> int:
+def countingWords(args: str) -> int:
 	sum = 0
 	args = args.split()
 	for link in args:

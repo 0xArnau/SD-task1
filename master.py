@@ -106,13 +106,33 @@ class TaskService(pb2_grpc.SendTaskServicer):
                 return pb2.TaskResponse(**{'result': str(result)})
 
         elif taskName in TASKS:
-            job = q.enqueue(TASKS[taskName], arg, result_ttl=100)           #arg = URL
-            print(f"JOB ID: {job.get_id()}")
+            jobs = []
+            arg = arg.split()
+            for link in arg:
+                jobs.append(q.enqueue(TASKS[taskName], link, result_ttl=100))           #arg = URL
 
-            while not job.is_finished:
-                time.sleep(.1)
-               
-            return pb2.TaskResponse(**{'result': str(job.result)})
+            while any (not job.is_finished for job in jobs):
+                time.sleep(.5)
+
+            if taskName == 'countingWords':
+                result = 0
+                for job in jobs:
+                    result += job.result
+            
+            elif taskName == 'wordCount':
+                result = {}
+                for job in jobs:
+                    dict = job.result
+                    for word in dict:
+                        if word in result:
+                            result[word] = result[word] + dict[word]
+                        else:
+                            result[word] = dict[word]            
+                    
+            else:
+                result = "ERROR"
+
+            return pb2.TaskResponse(**{'result': str(result)})
 
         else:
             return pb2.TaskResponse(**{'result': "Task does not exist"})    #countingWords, wordCount
