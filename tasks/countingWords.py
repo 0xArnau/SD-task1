@@ -1,8 +1,9 @@
 from urllib.request import urlopen
 import urllib
 
-def countingWords(*args) -> int:
+def countingWords(args) -> int:
 	sum = 0
+	args = args.split()
 	for link in args:
 		try:
 			sum += len(urlopen(link)
@@ -15,8 +16,9 @@ def countingWords(*args) -> int:
 				.split('http://localhost:8000/')[1]
 				.split()
 			)
+
 	return sum
 
 if __name__ == "__main__":
-	assert countingWords('http://localhost:8000/test_word_count.txt') == 4
-	assert countingWords('http://localhost:8000/test_word_count.tx') == 1
+	assert countingWords('http://localhost:8000/tests/test_word_count.txt') == 4
+	assert countingWords('http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt') == 8
