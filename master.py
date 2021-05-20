@@ -34,7 +34,6 @@ r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 q = Queue(connection=r)
 
 def processTask():
-	#r = Redis(host=REDIS_HOST, port=REDIS_PORT)
 	w = Worker(['default'], connection=r)
 	w.work()
 
@@ -59,10 +58,14 @@ def removeWorker(id):
 def listWorkers():
     return WORKERS
 
+def numberWorkers():
+    return len(WORKERS)
+
 MANAGE = {
     'createWorker': 'createWorker',
     'removeWorker': 'removeWorker',
-    'listWorkers': 'listWorkers'
+    'listWorkers': 'listWorkers',
+    'numberWorkers': 'numberWorkers'
 }
 
 ####################
@@ -82,22 +85,32 @@ class TaskService(pb2_grpc.SendTaskServicer):
             if MANAGE[taskName] == 'removeWorker':                          #arg = worker id
                 print('Remove Worker')
                 result = removeWorker(arg)
-                return pb2.TaskResponse(**{'result': str(result)})            
+                return pb2.TaskResponse(**{'result': str(result)})
+
             elif MANAGE[taskName] == 'createWorker':
                 print('Create Worker')
                 result = createWorker()
                 return pb2.TaskResponse(**{'result': str(result)})
+
+            elif MANAGE[taskName] == 'numberWorkers':
+                print('Number of Workers')
+                result = numberWorkers()
+                return pb2.TaskResponse(**{'result': str(result)})
+
             else:                                                           #listWorkers
                 print('List Workers')
                 result = listWorkers()
                 return pb2.TaskResponse(**{'result': str(result)})
+
         elif taskName in TASKS:
             job = q.enqueue(TASKS[taskName], arg, result_ttl=100)           #arg = URL
             print(f"JOB ID: {job.get_id()}")
+
             while not job.is_finished:
                 time.sleep(.1)
-                print("Not finished")
+               
             return pb2.TaskResponse(**{'result': str(job.result)})
+
         else:
             return pb2.TaskResponse(**{'result': "Task does not exist"})    #countingWords, wordCount
   
@@ -106,7 +119,6 @@ def serve():
     print("Waiting for client...")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     pb2_grpc.add_SendTaskServicer_to_server(TaskService(), server)
-    #pb2_grpc.add_ManageWorkersServicer_to_server(WorkManage(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
