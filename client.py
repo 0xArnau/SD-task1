@@ -60,7 +60,7 @@ def cli(client):
         if opt == '0': break
         file = input("URL: >> ")
         result = (client.getResultTask(task=opt, arg=file))
-        print(result)
+        print("result:",result.result,"\n")
 
 if __name__ == '__main__':
     client = TaskClient()
