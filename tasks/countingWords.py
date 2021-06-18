@@ -20,5 +20,5 @@ def countingWords(args: str) -> int:
 	return sum
 
 if __name__ == "__main__":
-	assert countingWords('http://localhost:8000/tests/test_word_count.txt') == 4
-	assert countingWords('http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt') == 8
+	print(countingWords('https://twitter.com/twitter/statuses/1404801881101242378'))
+	#assert countingWords('http://localhost:8000/tests/test_word_count.txt http://localhost:8000/tests/test_word_count.txt') == 8
